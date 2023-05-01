@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Calculate XIRR from Zerodha Tradebook CSV</title>
+</head>
+<body style="background-color: darkslategrey">
+<input type="file" id="file-input" multiple/>
+<input type="number" id="current-value" value="0"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script language="JavaScript">
+
+    function xirrMethod1(cashFlows, guess) {
+        let x0 = guess || 0.1;
+        let f = function (x) {
+            let res = cashFlows[0].amount.toFixed(2);
+            for (let i = 1; i < cashFlows.length; i++) {
+                res += cashFlows[i].amount / Math.pow(1 + x, (cashFlows[i].cashFlowDate - cashFlows[0].cashFlowDate) / 365);
+                if (isNaN(res) || !isFinite(cashFlows[i].amount))
+                    console.log("Calculation broke here", JSON.stringify(cashFlows[i]));
+            }
+            return res;
+        };
+        let f1 = function (x) {
+            let res = 0;
+            for (let i = 1; i < cashFlows.length; i++) {
+                res -= cashFlows[i].amount * (cashFlows[i].cashFlowDate - cashFlows[0].cashFlowDate) / (365 * Math.pow(1 + x, (cashFlows[i].cashFlowDate - cashFlows[0].cashFlowDate) / 365 + 1));
+                if (isNaN(res) || !isFinite(cashFlows[i].amount))
+                    console.log("Calculation broke here", JSON.stringify(cashFlows[i]));
+            }
+            return res;
+        };
+        let x1 = x0 - f(x0) / f1(x0);
+        while (Math.abs(x1 - x0) > 0.0001) {
+            x0 = x1;
+            x1 = x0 - f(x0) / f1(x0);
+        }
+        return x1;
+    }
+
+    function xirrMethod2(values, dates, guess) {
+        // Calculates the resulting amount
+        const irrResult = function (values, dates, rate) {
+            const r = rate + 1;
+            let result = values[0];
+            for (let i = 1; i < values.length; i++) {
+                result += values[i] / Math.pow(r, moment(dates[i]).diff(moment(dates[0]), 'days') / 365);
+            }
+            return result;
+        };
+
+        // Calculates the first derivation
+        const irrResultDeriv = function(values, dates, rate) {
+            const r = rate + 1;
+            let result = 0;
+            for (let i = 1; i < values.length; i++) {
+                const frac = moment(dates[i]).diff(moment(dates[0]), 'days') / 365;
+                result -= frac * values[i] / Math.pow(r, frac + 1);
+            }
+            return result;
+        }
+
+        // Check that values contains at least one positive value and one negative value
+        let positive = false;
+        let negative = false;
+        for (let i = 0; i < values.length; i++) {
+            if (values[i] > 0) positive = true;
+            if (values[i] < 0) negative = true;
+        }
+
+        // Return error if values does not contain at least one positive value and one negative value
+        if (!positive || !negative) return '#NUM!';
+
+        // Initialize guess and resultRate
+        let resultRate = guess;
+
+        // Set maximum epsilon for end of iteration
+        const epsMax = 1e-10;
+
+        // Set maximum number of iterations
+        const iterMax = 50;
+
+        // Implement Newton's method
+        let newRate, epsRate, resultValue;
+        let iteration = 0;
+        let contLoop = true;
+        do {
+            resultValue = irrResult(values, dates, resultRate);
+            newRate = resultRate - resultValue / irrResultDeriv(values, dates, resultRate);
+            epsRate = Math.abs(newRate - resultRate);
+            resultRate = newRate;
+            contLoop = (epsRate > epsMax) && (Math.abs(resultValue) > epsMax);
+        } while(contLoop && (++iteration < iterMax));
+
+        if(contLoop) return '#NUM!';
+
+        // Return internal rate of return
+        return resultRate;
+    }
+
+    function addCashFlow(date, cashFlows, amount) {
+        const index = _.findIndex(cashFlows, (x) => x.cashFlowDate.toDateString() === date.toDateString());
+        if (isNaN(amount) || !isFinite(amount))
+            console.log(amount, date);
+        if (index >= 0) {
+            cashFlows[index].amount += amount;
+            cashFlows[index].amount = (Math.round(cashFlows[index].amount * 100) / 100);
+        } else {
+            cashFlows.push({cashFlowDate: date, amount: (Math.round(amount * 100) / 100)});
+        }
+    }
+
+    function calculateXirrFromCsv(files, callback) {
+        let cashFlows = [];
+        let filesRemaining = files.length;
+        files.forEach(function (file) {
+            let reader = new FileReader();
+            reader.onload = function () {
+                console.log("Processing file", file);
+                let lines = reader.result.split("\n");
+                let transactions = lines.map(function (line) {
+                    return line.split(",");
+                });
+                transactions.forEach(function (transaction, index) {
+                    const isNotHeader = index !== 0;
+                    const isNotEmpty = transaction.length >= 8;
+                    if (isNotHeader && isNotEmpty) {
+                        let amount;
+                        if (transaction[6] === "buy") {
+                            amount = -parseFloat(transaction[9] * transaction[8]);
+                        } else if (transaction[6] === "sell") {
+                            amount = parseFloat(transaction[9] * transaction[8]);
+                        }
+                        addCashFlow(new Date(transaction[2]), cashFlows, amount);
+                    }
+                });
+                filesRemaining--;
+                if (filesRemaining === 0) {
+                    let currentValue = document.querySelector("#current-value").value;
+                    console.log("Net Cash Inflow", _.reduce(cashFlows, (sum, x) => sum + x.amount, 0));
+                    cashFlows.push({cashFlowDate: new Date(), amount: parseFloat(currentValue)});
+                    console.log("Net Cash Inflow", _.reduce(cashFlows, (sum, x) => sum + x.amount, 0));
+                    let guess = 0.1;
+                    const sortedCashFlows = cashFlows.sort((a, b) => new Date(a.cashFlowDate) - new Date(b.cashFlowDate));
+                    const cashFlowsWithoutInitialPositiveFlows = _.slice(sortedCashFlows, 2);
+
+                    let cashFlowsInUse = sortedCashFlows;
+                    // callback(xirrMethod1(cashFlowsInUse, guess));
+                    callback(xirrMethod2(cashFlowsInUse.map(x => x.amount), cashFlowsInUse.map(x => x.cashFlowDate), 0.1));
+                }
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    let fileInput = document.querySelector("#file-input");
+    fileInput.addEventListener("change", function (event) {
+        let files = Array.from(event.target.files);
+        calculateXirrFromCsv(files, function (result) {
+            console.log("XIRR VALUE:", result);
+        });
+    });
+</script>
+</body>
+</html>

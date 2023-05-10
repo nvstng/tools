@@ -10,15 +10,19 @@
         function onLoad() {
             document.querySelector("#current-value").value = getCurrentPortfolioValue();
 
-            let fileInput = document.querySelector("#file-input");
+            const fileInput = document.querySelector("#file-input");
             fileInput.addEventListener("change", function (event) {
-                let files = Array.from(event.target.files);
+                const files = Array.from(event.target.files);
                 calculateXirrFromCsv(files, function (result) {
-                    const xirrValueNode = document.getElementById("xirr-value");
-                    xirrValueNode.innerText = _.round((result * 100), 2) + " %";
+                    setXIRRFieldText(_.round((result * 100), 2) + " %");
                     console.log("XIRR VALUE:", result);
                 });
             });
+        }
+
+        function setXIRRFieldText(text) {
+            const xirrValueNode = document.getElementById("xirr-value");
+            xirrValueNode.innerText = text;
         }
 
         function getCurrentPortfolioValue() {
@@ -132,11 +136,12 @@
         }
 
         function calculateXirrFromCsv(files, callback) {
-            let cashFlows = [];
+            const cashFlows = [];
             let filesRemaining = files.length;
-            files.forEach(function (file) {
-                let reader = new FileReader();
+            files.forEach(function (file, index) {
+                const reader = new FileReader();
                 reader.onload = function () {
+                    setXIRRFieldText(`Reading file(${index + 1}/${files.length}): ${file}`);
                     console.log("Processing file", file);
                     let lines = reader.result.split("\n");
                     let transactions = lines.map(function (line) {
@@ -176,9 +181,21 @@
     </script>
 </head>
 <body style="background-color: darkslategrey" onload="onLoad()">
+
+<h2 style="color: white">1. Enter current value of portfolio (INR)</h2>
+<input type="number" id="current-value"/>
+<br/><br/><br/>
+
+<h2 style="color: white">2. Select one or more tradebook files (CSV format)</h2>
 <input type="file" id="file-input" multiple/>
-<input type="number" id="current-value" value="0"/>
-<h3 id="xirr-label" style="color: white">Your XIRR is</h3>
-<h3 id="xirr-value" style="color: white"></h3>
+<br/><br/><br/>
+
+<h2 style="color: white">3. Your XIRR is....</h2>
+<h3 id="xirr-value" style="color: white">(To be calculated, please upload files)</h3>
+
+<br/><br/>
+<h2 style="color: white">Info</h2>
+<p style="color: white; font-size:large">You can download tradebook files from Zerodha Console. If there are multiple then keep them all in a single directory. In step 2 select all the files together.</p>
+<p style="color: white; font-size:large">All the calculations are done in your browser. The files or xirr value are not sent anywhere. You can verify by via network tab in your browser dev tools.</p>
 </body>
 </html>

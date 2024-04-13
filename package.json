@@ -1,0 +1,19 @@
+{
+  "name": "tools",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "smoke-test": "node --experimental-specifier-resolution=node index.js"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "moment": "2.29.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.4",
+    "babel-jest": "^27.4.2",
+    "jest": "^27.4.3"
+  }
+}

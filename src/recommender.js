@@ -1,61 +1,13 @@
-const intermediateMappings = [
-    {
-        "trend": "neg",
-        "valuation": "under",
-        "action": "HOLD"
-    },
-    {
-        "trend": "neg",
-        "valuation": "fair",
-        "action": "%SELL"
-    },
-    {
-        "trend": "neg",
-        "valuation": "over",
-        "action": "SELL"
-    },
-    {
-        "trend": "neu",
-        "valuation": "under",
-        "action": "BUY"
-    },
-    {
-        "trend": "neu",
-        "valuation": "fair",
-        "action": "HOLD"
-    },
-    {
-        "trend": "neu",
-        "valuation": "over",
-        "action": "%SELL"
-    },
-    {
-        "trend": "pos",
-        "valuation": "under",
-        "action": "BUY"
-    },
-    {
-        "trend": "pos",
-        "valuation": "fair",
-        "action": "BUY"
-    },
-    {
-        "trend": "pos",
-        "valuation": "over",
-        "action": "HOLD"
-    }
-];
-
 const primaryMappings = [
     {
         "trend": "neg",
         "valuation": "under",
-        "action": "%SELL"
+        "action": "% SELL"
     },
     {
         "trend": "neg",
         "valuation": "fair",
-        "action": "SELL"
+        "action": "%% SELL"
     },
     {
         "trend": "neg",
@@ -65,7 +17,7 @@ const primaryMappings = [
     {
         "trend": "neu",
         "valuation": "under",
-        "action": "HOLD"
+        "action": "BUY"
     },
     {
         "trend": "neu",
@@ -75,7 +27,7 @@ const primaryMappings = [
     {
         "trend": "neu",
         "valuation": "over",
-        "action": "%SELL"
+        "action": "% SELL"
     },
     {
         "trend": "pos",
@@ -94,9 +46,18 @@ const primaryMappings = [
     }
 ];
 
+function createAllocation(conviction, minAllocation, targetAllocation, maxAllocation) {
+    return {
+        "conviction": conviction,
+        "minAllocation": minAllocation,
+        "targetAllocation": targetAllocation,
+        "maxAllocation": maxAllocation
+    }
+}
+
 const underValued = {
-    "lender": 0.29,
-    "nonLender": 0.34
+    "lender": 0.30,
+    "nonLender": 0.35
 };
 
 const fairlyValued = {
@@ -104,12 +65,33 @@ const fairlyValued = {
     "nonLender": 0.23
 }
 
-function trendValuationAction(primaryTrend, valuation, isRecommended, holdingLevel) {
+const allocations = [createAllocation("low", 0.01, 0.015, 0.015),
+    createAllocation("med", 0.015, 0.025, 0.0275),
+    createAllocation("high", 0.0175, 0.0325, 0.035)];
+
+const totalFund = 350;
+
+function allocation(conviction, anchorPrice, price) {
+    const allocation = allocations.find((x) => x.conviction === conviction);
+    const allocationPrice = allocation.targetAllocation * anchorPrice;
+    const allocationShares = allocationPrice / price;
+    return allocationShares;
+}
+
+function trendValuationAction(symbol, primaryTrend, valuation, soicPrice, holdingLevel, price, anchorPrice) {
     const primaryMapping = primaryMappings.find((x) => x.trend === primaryTrend && valuation === x.valuation);
     let returnValue = "";
+    const isRecommendedStock = soicPrice !== 0;
+    const isRecommendedAndBelowPrice = isRecommendedStock ? (price <= soicPrice) : false;
 
-    if (primaryMapping && primaryMapping.action === "BUY") {
-        returnValue = (isRecommended && holdingLevel === "UND") ? "BUY" : "HOLD";
+    console.log(symbol, primaryTrend, valuation, soicPrice, holdingLevel, price, anchorPrice, isRecommendedStock, isRecommendedAndBelowPrice);
+
+    if (isRecommendedAndBelowPrice) return "BUY";
+
+    if (price > anchorPrice) {
+        returnValue = "HOLD";
+    } else if (primaryMapping && primaryMapping.action === "BUY") {
+        returnValue = (holdingLevel === "UND") ? "BUY" : "HOLD";
     } else if (primaryMapping) {
         returnValue = primaryMapping.action;
     } else {
@@ -124,10 +106,6 @@ function valuation(x, businessType = "nonLender") {
     return "over";
 }
 
-function isRecommended(highPrice, price) {
-    return price <= highPrice;
-}
-
 function checkTech(dayChange, primaryTrend, twoWeekChange) {
     if (dayChange < 1.5 && dayChange > -1.5) return (false || twoWeekCheckTech(twoWeekChange, primaryTrend));
     if ((dayChange >= 1.5 && primaryTrend === "pos") || (dayChange <= -1.5 && primaryTrend === "neg")) return (false || twoWeekCheckTech(twoWeekChange, primaryTrend));
@@ -139,3 +117,6 @@ function twoWeekCheckTech(twoWeekChange, primaryTrend) {
     if ((twoWeekChange >= 0.05 && primaryTrend === "pos") || (twoWeekChange <= -0.05 && primaryTrend === "neg")) return false;
     return true;
 }
+
+// Don't copy this to app script
+export {checkTech, valuation, trendValuationAction};

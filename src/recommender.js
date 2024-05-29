@@ -74,24 +74,26 @@ const totalFund = 350;
 function allocation(conviction, anchorPrice, price) {
     const allocation = allocations.find((x) => x.conviction === conviction);
     const allocationPrice = allocation.targetAllocation * anchorPrice;
-    const allocationShares = allocationPrice / price;
-    return allocationShares;
+    return allocationPrice / price;
 }
 
 function trendValuationAction(symbol, primaryTrend, valuation, soicPrice, holdingLevel, price, anchorPrice) {
     const primaryMapping = primaryMappings.find((x) => x.trend === primaryTrend && valuation === x.valuation);
     let returnValue = "";
     const isRecommendedStock = soicPrice !== 0;
-    const isRecommendedAndBelowPrice = isRecommendedStock ? (price <= soicPrice) : false;
+    const isPriceBelow = price <= soicPrice;
+    const belowHoldingLevel = holdingLevel === 'UND';
 
-    console.log(symbol, primaryTrend, valuation, soicPrice, holdingLevel, price, anchorPrice, isRecommendedStock, isRecommendedAndBelowPrice);
+    console.log(symbol, primaryTrend, valuation, soicPrice, holdingLevel, price, anchorPrice, isRecommendedStock, isPriceBelow, belowHoldingLevel);
 
-    if (isRecommendedAndBelowPrice) return "BUY";
 
-    if (price > anchorPrice) {
+    if (isRecommendedStock && isPriceBelow && belowHoldingLevel) return "BUY";
+    if (isRecommendedStock && !isPriceBelow) return "HOLD";
+
+    if (primaryTrend === "neg" && price > anchorPrice) {
         returnValue = "HOLD";
     } else if (primaryMapping && primaryMapping.action === "BUY") {
-        returnValue = (holdingLevel === "UND") ? "BUY" : "HOLD";
+        returnValue = belowHoldingLevel ? "BUY" : "HOLD";
     } else if (primaryMapping) {
         returnValue = primaryMapping.action;
     } else {

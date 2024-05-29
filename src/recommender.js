@@ -83,14 +83,15 @@ function trendValuationAction(symbol, primaryTrend, valuation, soicPrice, holdin
     const isRecommendedStock = soicPrice !== 0;
     const isPriceBelow = price <= soicPrice;
     const belowHoldingLevel = holdingLevel === 'UND';
+    const useAnchorPriceToDecide = (["neg"].includes(primaryTrend) || (["neu"].includes(primaryTrend) && ["over", "fair"].includes(valuation)));
+    const priceAboveAnchor = price > anchorPrice;
 
-    console.log(symbol, primaryTrend, valuation, soicPrice, holdingLevel, price, anchorPrice, isRecommendedStock, isPriceBelow, belowHoldingLevel);
-
+    console.log(symbol, primaryTrend, valuation, soicPrice, holdingLevel, price, anchorPrice, isRecommendedStock, isPriceBelow, belowHoldingLevel, useAnchorPriceToDecide, priceAboveAnchor);
 
     if (isRecommendedStock && isPriceBelow && belowHoldingLevel) return "BUY";
-    if (isRecommendedStock && !isPriceBelow) return "HOLD";
+    if (isRecommendedStock) return "HOLD";
 
-    if (primaryTrend === "neg" && price > anchorPrice) {
+    if (useAnchorPriceToDecide && priceAboveAnchor) {
         returnValue = "HOLD";
     } else if (primaryMapping && primaryMapping.action === "BUY") {
         returnValue = belowHoldingLevel ? "BUY" : "HOLD";

@@ -109,8 +109,13 @@ function valuation(x, businessType = "nonLender") {
     return "over";
 }
 
-function checkTech(dayChange, primaryTrend, twoWeekChange) {
-    if (dayChange < 1.5 && dayChange > -1.5) return (false || twoWeekCheckTech(twoWeekChange, primaryTrend));
+function checkTech(dayChange, primaryTrend, twoWeekChange, soicPrice) {
+    const noCheckRange = dayChange < 1.5 && dayChange > -1.5;
+    const isRecommendedStock = soicPrice !== 0;
+
+    if (isRecommendedStock) return false;
+
+    if (noCheckRange) return (false || twoWeekCheckTech(twoWeekChange, primaryTrend));
     if ((dayChange >= 1.5 && primaryTrend === "pos") || (dayChange <= -1.5 && primaryTrend === "neg")) return (false || twoWeekCheckTech(twoWeekChange, primaryTrend));
     return true;
 }

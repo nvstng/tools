@@ -126,5 +126,14 @@ function twoWeekCheckTech(twoWeekChange, primaryTrend) {
     return true;
 }
 
+function doValuation(quarterDoneIn, soicPrice, currentQuarter = "Mar-24") {
+    const isRecommendedStock = soicPrice !== 0;
+    if (isRecommendedStock) return false;
+
+    console.log("doValuation", soicPrice, quarterDoneIn, soicPrice);
+
+    return quarterDoneIn !== currentQuarter;
+}
+
 // Don't copy this to app script
-export {checkTech, valuation, trendValuationAction};
+export {checkTech, valuation, trendValuationAction, doValuation};

@@ -33,6 +33,7 @@ it('check', function () {
     expect(trendValuationAction("HDFCBANK", "neg", valuation(0.3, "lender"), 100, '', 94.8, 87.8)).toBe("HOLD");
     expect(trendValuationAction("BCONCEPTS", "neg", valuation(0.35, "nonLender"), 0, '', 850.2, 810.48)).toBe("HOLD");
     expect(trendValuationAction("BCONCEPTS", "neg", valuation(0.35, "nonLender"), 0, '', 850.2, 0)).toBe("% SELL");
+    expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.38, "nonLender"), 0, 'UND', 703, 714.84)).toBe("BUY");
 });
 
 it('should do valuation', function () {

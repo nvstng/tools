@@ -57,12 +57,12 @@ function createAllocation(conviction, minAllocation, targetAllocation, maxAlloca
 
 const underValued = {
     "lender": 0.30,
-    "nonLender": 0.35
+    "nonLender": 0.39
 };
 
 const fairlyValued = {
     "lender": 0.2,
-    "nonLender": 0.23
+    "nonLender": 0.25
 }
 
 const allocations = [createAllocation("low", 0.01, 0.015, 0.015),

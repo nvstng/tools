@@ -9,14 +9,14 @@ it('check', function () {
     // Neutral trend
     expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.33, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("HOLD");
     expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.34, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("HOLD");
-    expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.35, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("BUY");
-    expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.36, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("BUY");
+    expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.40, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("BUY");
+    expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.41, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("BUY");
 
     // Positive trend
     expect(trendValuationAction("BCONCEPTS", "pos", valuation(0.33, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("HOLD");
     expect(trendValuationAction("BCONCEPTS", "pos", valuation(0.34, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("HOLD");
-    expect(trendValuationAction("BCONCEPTS", "pos", valuation(0.35, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("BUY");
-    expect(trendValuationAction("BCONCEPTS", "pos", valuation(0.36, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("BUY");
+    expect(trendValuationAction("BCONCEPTS", "pos", valuation(0.40, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("BUY");
+    expect(trendValuationAction("BCONCEPTS", "pos", valuation(0.41, "nonLender"), 0, 'UND', 653.9, 419.40)).toBe("BUY");
 
     // SOIC
     expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.36, "nonLender"), 700, 'UND', 653.9, 419.40)).toBe("BUY");
@@ -32,8 +32,8 @@ it('check', function () {
     expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.17, "nonLender"), 0, 'UND', 1481, 1358.00)).toBe("HOLD");
     expect(trendValuationAction("HDFCBANK", "neg", valuation(0.3, "lender"), 100, '', 94.8, 87.8)).toBe("HOLD");
     expect(trendValuationAction("BCONCEPTS", "neg", valuation(0.35, "nonLender"), 0, '', 850.2, 810.48)).toBe("HOLD");
-    expect(trendValuationAction("BCONCEPTS", "neg", valuation(0.35, "nonLender"), 0, '', 850.2, 0)).toBe("% SELL");
-    expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.38, "nonLender"), 0, 'UND', 703, 714.84)).toBe("BUY");
+    expect(trendValuationAction("BCONCEPTS", "neg", valuation(0.40, "nonLender"), 0, '', 850.2, 0)).toBe("% SELL");
+    expect(trendValuationAction("BCONCEPTS", "neu", valuation(0.43, "nonLender"), 0, 'UND', 703, 714.84)).toBe("BUY");
 });
 
 it('should do valuation', function () {

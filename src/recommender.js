@@ -80,17 +80,12 @@ function allocation(conviction, anchorPrice, price) {
 function trendValuationAction(symbol, primaryTrend, valuation, soicPrice, holdingLevel, price, anchorPrice) {
     const primaryMapping = primaryMappings.find((x) => x.trend === primaryTrend && valuation === x.valuation);
     let returnValue = "";
-    const isRecommendedStock = soicPrice !== 0;
-    const isPriceBelow = price <= soicPrice;
     const belowHoldingLevel = holdingLevel === 'UND';
     const useAnchorPriceToDecide = (["neg"].includes(primaryTrend) || (["neu"].includes(primaryTrend) && ["over", "fair"].includes(valuation)));
     const anchorPricePresent = anchorPrice && anchorPrice !== 0;
     const priceAboveAnchor = price > anchorPrice;
 
-    console.log(symbol, primaryTrend, valuation, soicPrice, holdingLevel, price, anchorPrice, isRecommendedStock, isPriceBelow, belowHoldingLevel, useAnchorPriceToDecide, priceAboveAnchor);
-
-    if (isRecommendedStock && isPriceBelow && belowHoldingLevel) return "BUY";
-    if (isRecommendedStock) return "HOLD";
+    console.log(symbol, primaryTrend, valuation, holdingLevel, price, anchorPrice, belowHoldingLevel, useAnchorPriceToDecide, priceAboveAnchor);
 
     if (anchorPricePresent && useAnchorPriceToDecide && priceAboveAnchor) {
         returnValue = "HOLD";

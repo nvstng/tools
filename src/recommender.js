@@ -120,8 +120,8 @@ function twoWeekCheckTech(twoWeekChange, primaryTrend) {
 }
 
 function doValuation(quarterDoneIn, soicPrice, currentQuarter = "Mar-24") {
-    const isRecommendedStock = soicPrice !== 0;
-    if (isRecommendedStock) return false;
+    // const isRecommendedStock = soicPrice !== 0;
+    // if (isRecommendedStock) return false;
 
     console.log("doValuation", soicPrice, quarterDoneIn, soicPrice);
 

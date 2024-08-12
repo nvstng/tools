@@ -26,5 +26,5 @@ it('check', function () {
 });
 
 it('should do valuation', function () {
-    expect(doValuation("Mar-24", 0)).toBe(false);
+    expect(doValuation("Jun-24", 0)).toBe(false);
 });

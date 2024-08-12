@@ -1,5 +1,5 @@
 import {doValuation, trendValuationAction, valuation} from "./recommender.js";
-import expect from "expect";
+import {expect, it} from "@jest/globals";
 
 it('check', function () {
     // Negative trend

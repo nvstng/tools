@@ -1,51 +1,3 @@
-const primaryMappings = [
-    {
-        "trend": "neg",
-        "valuation": "under",
-        "action": "% SELL"
-    },
-    {
-        "trend": "neg",
-        "valuation": "fair",
-        "action": "%% SELL"
-    },
-    {
-        "trend": "neg",
-        "valuation": "over",
-        "action": "SELL"
-    },
-    {
-        "trend": "neu",
-        "valuation": "under",
-        "action": "BUY"
-    },
-    {
-        "trend": "neu",
-        "valuation": "fair",
-        "action": "HOLD"
-    },
-    {
-        "trend": "neu",
-        "valuation": "over",
-        "action": "% SELL"
-    },
-    {
-        "trend": "pos",
-        "valuation": "under",
-        "action": "BUY"
-    },
-    {
-        "trend": "pos",
-        "valuation": "fair",
-        "action": "HOLD"
-    },
-    {
-        "trend": "pos",
-        "valuation": "over",
-        "action": "HOLD"
-    }
-];
-
 function createAllocation(conviction, minAllocation, targetAllocation, maxAllocation) {
     return {
         "conviction": conviction,
@@ -77,45 +29,23 @@ function allocation(conviction, anchorPrice, price) {
     return allocationPrice / price;
 }
 
-function trendValuationAction(symbol, primaryTrend, valuation, soicPrice, holdingLevel, price, anchorPrice) {
-    const primaryMapping = primaryMappings.find((x) => x.trend === primaryTrend && valuation === x.valuation);
-    let returnValue = "";
-    const belowHoldingLevel = holdingLevel === 'UND';
-    const useAnchorPriceToDecide = (["neg"].includes(primaryTrend) || (["neu"].includes(primaryTrend) && ["over", "fair"].includes(valuation)));
-    const anchorPricePresent = anchorPrice && anchorPrice !== 0;
-    const priceAboveAnchor = price > anchorPrice;
-
-    console.log(symbol, primaryTrend, valuation, holdingLevel, price, anchorPrice, belowHoldingLevel, useAnchorPriceToDecide, priceAboveAnchor);
-
-    if (anchorPricePresent && useAnchorPriceToDecide && priceAboveAnchor) {
-        returnValue = "HOLD";
-    } else if (primaryMapping && primaryMapping.action === "BUY") {
-        returnValue = belowHoldingLevel ? "BUY" : "HOLD";
-    } else if (primaryMapping) {
-        returnValue = primaryMapping.action;
-    } else {
-        returnValue += `ERROR`;
-    }
-    return returnValue;
-}
-
 function valuation(x, businessType = "nonLender") {
     if (x >= underValued[businessType]) return "under";
     if (x >= fairlyValued[businessType]) return "fair";
     return "over";
 }
 
-function checkTech(dayChange, primaryTrend, twoWeekChange, soicPrice) {
+function checkTech(dayChange, tech, twoWeekChange) {
     const noCheckRange = dayChange < 1.5 && dayChange > -1.5;
 
-    if (noCheckRange) return (false || twoWeekCheckTech(twoWeekChange, primaryTrend));
-    if ((dayChange >= 1.5 && primaryTrend === "pos") || (dayChange <= -1.5 && primaryTrend === "neg")) return (false || twoWeekCheckTech(twoWeekChange, primaryTrend));
+    if (noCheckRange) return (false || twoWeekCheckTech(twoWeekChange, tech));
+    if ((dayChange >= 1.5 && tech === "a") || (dayChange <= -1.5 && ["aa", "aaa", "aaa"].includes(tech))) return (false || twoWeekCheckTech(twoWeekChange, tech));
     return true;
 }
 
-function twoWeekCheckTech(twoWeekChange, primaryTrend) {
+function twoWeekCheckTech(twoWeekChange, tech) {
     if (twoWeekChange < 0.05 && twoWeekChange > -0.05) return false;
-    if ((twoWeekChange >= 0.05 && primaryTrend === "pos") || (twoWeekChange <= -0.05 && primaryTrend === "neg")) return false;
+    if ((twoWeekChange >= 0.05 && tech === "a") || (twoWeekChange <= -0.05 && ["aa", "aaa", "aaa"].includes(tech))) return false;
     return true;
 }
 
@@ -150,13 +80,5 @@ function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYe
     return returnValue;
 }
 
-// Technical input will be A for above 20 day. AA for above 50 day and AAA for above 200 day like that.
-// If one year return is less that threshold then it comes in the sell zone - S
-// If one year return is less that threshold - 10% then it comes in the sell zone - SS
-// If one year return is less that threshold - 20% then it comes in the sell zone - SSS
-// if three year returns are greater than threshold then B
-// if four year returns are greater than threshold then BB
-// if five year returns are greater than threshold then BBB
-
 // Don't copy this to app script
-export {checkTech, valuation, trendValuationAction, doValuation};
+export {checkTech, valuation, doValuation};

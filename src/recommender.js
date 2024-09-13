@@ -127,5 +127,36 @@ function doValuation(quarterDoneIn, soicPrice, currentQuarter = "Jun-24", result
     return resultsOut && quarterDoneIn !== currentQuarter;
 }
 
+const buyValue = 0.45;
+const sellValue = 0.40;
+
+function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYearExpectedReturn, holdingLevel, price, anchorPrice) {
+    const belowHoldingLevel = holdingLevel === 'UND';
+    let returnValue = "";
+    const anchorPricePresent = anchorPrice && anchorPrice !== 0;
+    const priceAboveAnchor = price > anchorPrice;
+
+    console.log(symbol, tech, holdingLevel, price, anchorPrice, belowHoldingLevel, priceAboveAnchor);
+
+    if (anchorPricePresent && priceAboveAnchor) {
+        returnValue = "HOLD";
+    } else if (threeYearExpectedReturn >= buyValue && belowHoldingLevel) {
+        returnValue = (5 - tech.trim().length);
+    } else if (twoYearExpectedReturn < sellValue) {
+        returnValue = (-tech.trim().length);
+    } else {
+        returnValue = "HOLD";
+    }
+    return returnValue;
+}
+
+// Technical input will be A for above 20 day. AA for above 50 day and AAA for above 200 day like that.
+// If one year return is less that threshold then it comes in the sell zone - S
+// If one year return is less that threshold - 10% then it comes in the sell zone - SS
+// If one year return is less that threshold - 20% then it comes in the sell zone - SSS
+// if three year returns are greater than threshold then B
+// if four year returns are greater than threshold then BB
+// if five year returns are greater than threshold then BBB
+
 // Don't copy this to app script
 export {checkTech, valuation, trendValuationAction, doValuation};

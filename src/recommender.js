@@ -72,7 +72,7 @@ function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYe
         returnValue = "HOLD";
     } else if (threeYearExpectedReturn >= buyValue && belowHoldingLevel) {
         returnValue = (5 - tech.trim().length);
-    } else if (twoYearExpectedReturn < sellValue) {
+    } else if ((twoYearExpectedReturn < sellValue) || (anchorPricePresent && !priceAboveAnchor)) {
         returnValue = (-tech.trim().length);
     } else {
         returnValue = "HOLD";
@@ -81,4 +81,4 @@ function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYe
 }
 
 // Don't copy this to app script
-export {checkTech, valuation, doValuation};
+export {checkTech, valuation, doValuation, trendValuationAction2};

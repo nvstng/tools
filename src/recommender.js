@@ -80,5 +80,26 @@ function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYe
     return returnValue;
 }
 
+function holdingLevel(stage, stockBuyValue, totalCost) {
+    let expectedStockCost = 0;
+    switch (stage) {
+        case 1:
+            expectedStockCost = totalCost * 0.0075;
+            break;
+        case 2:
+            expectedStockCost = totalCost * 0.01;
+            break;
+        case 3:
+            expectedStockCost = totalCost * 0.015;
+            break;
+        case 4:
+            expectedStockCost = totalCost * 0.02;
+            break;
+        default:
+            break;
+    }
+    return stockBuyValue < expectedStockCost ? "UND" : "";
+}
+
 // Don't copy this to app script
 export {checkTech, valuation, doValuation, trendValuationAction2};

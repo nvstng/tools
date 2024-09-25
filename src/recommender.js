@@ -80,25 +80,27 @@ function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYe
     return returnValue;
 }
 
-function holdingLevel(stage, stockBuyValue, totalCost) {
-    let expectedStockCost = 0;
+function allocAmount(stage, totalCost) {
     switch (stage) {
         case 1:
-            expectedStockCost = totalCost * 0.0075;
-            break;
+            return totalCost * 0.0075;
         case 2:
-            expectedStockCost = totalCost * 0.01;
-            break;
+            return totalCost * 0.01;
         case 3:
-            expectedStockCost = totalCost * 0.015;
-            break;
+            return totalCost * 0.015;
         case 4:
-            expectedStockCost = totalCost * 0.02;
-            break;
+            return totalCost * 0.02;
         default:
-            break;
+            return 0;
     }
-    return stockBuyValue < expectedStockCost ? "UND" : "";
+}
+
+function holdingLevel(stage, stockBuyValue, totalCost) {
+    return stockBuyValue < allocAmount(stage, totalCost) ? "UND" : "";
+}
+
+function remainingAlloc(stage, stockBuyValue, totalCost) {
+    return stockBuyValue - allocAmount(stage, totalCost);
 }
 
 // Don't copy this to app script

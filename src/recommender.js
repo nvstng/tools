@@ -96,7 +96,9 @@ function allocAmount(stage, totalCost) {
 }
 
 function holdingLevel(stage, stockBuyValue, totalCost) {
-    return stockBuyValue < allocAmount(stage, totalCost) ? "UND" : "";
+    const diff = stockBuyValue - allocAmount(stage, totalCost);
+    if (diff >= 0.01) return "";
+    return "UND";
 }
 
 function remainingAlloc(stage, stockBuyValue, totalCost) {
@@ -104,4 +106,4 @@ function remainingAlloc(stage, stockBuyValue, totalCost) {
 }
 
 // Don't copy this to app script
-export {checkTech, valuation, doValuation, trendValuationAction2};
+export {checkTech, valuation, doValuation, trendValuationAction2, holdingLevel, allocAmount};

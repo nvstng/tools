@@ -57,8 +57,8 @@ function doValuation(quarterDoneIn, soicPrice, currentQuarter = "Jun-24", result
     return resultsOut && quarterDoneIn !== currentQuarter;
 }
 
-const buyValue = 0.45;
-const sellValue = 0.40;
+const buyThreshold = 0.45;
+const sellThreshold = 0.40;
 
 function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYearExpectedReturn, holdingLevel, price, anchorPrice) {
     const belowHoldingLevel = holdingLevel === 'UND';
@@ -70,9 +70,9 @@ function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYe
 
     if (anchorPricePresent && priceAboveAnchor) {
         returnValue = "HOLD";
-    } else if (threeYearExpectedReturn >= buyValue && belowHoldingLevel) {
+    } else if (threeYearExpectedReturn >= buyThreshold && belowHoldingLevel) {
         returnValue = (5 - tech.trim().length);
-    } else if ((twoYearExpectedReturn < sellValue) || (anchorPricePresent && !priceAboveAnchor)) {
+    } else if ((twoYearExpectedReturn < sellThreshold) || (anchorPricePresent && !priceAboveAnchor)) {
         returnValue = (-tech.trim().length);
     } else {
         returnValue = "HOLD";

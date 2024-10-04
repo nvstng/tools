@@ -63,17 +63,20 @@ const sellThreshold = 0.40;
 function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYearExpectedReturn, holdingLevel, price, anchorPrice) {
     const belowHoldingLevel = holdingLevel === 'UND';
     let returnValue = "";
-    const anchorPricePresent = anchorPrice && anchorPrice !== 0;
+    const anchorPricePresent = anchorPrice && anchorPrice !== "" && anchorPrice !== 0;
     const priceAboveAnchor = price > anchorPrice;
 
     console.log(symbol, tech, holdingLevel, price, anchorPrice, belowHoldingLevel, priceAboveAnchor);
 
+    const trimmedLength = tech.trim().length;
     if (anchorPricePresent && priceAboveAnchor) {
         returnValue = "HOLD";
     } else if (threeYearExpectedReturn >= buyThreshold && belowHoldingLevel) {
-        returnValue = (5 - tech.trim().length);
+        returnValue = (5 - trimmedLength);
     } else if ((twoYearExpectedReturn < sellThreshold) || (anchorPricePresent && !priceAboveAnchor)) {
-        returnValue = (-tech.trim().length);
+        returnValue = -trimmedLength;
+    } else if (tech.length > 1) {
+        returnValue = -trimmedLength + 1;
     } else {
         returnValue = "HOLD";
     }

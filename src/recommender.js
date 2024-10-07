@@ -57,30 +57,38 @@ function doValuation(quarterDoneIn, soicPrice, currentQuarter = "Jun-24", result
     return resultsOut && quarterDoneIn !== currentQuarter;
 }
 
-const buyThreshold = 0.45;
-const sellThreshold = 0.40;
+const buyThreshold = 0.44;
+const sellThreshold = 0.39;
 
 function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYearExpectedReturn, holdingLevel, price, anchorPrice) {
-    const belowHoldingLevel = holdingLevel === 'UND';
-    let returnValue = "";
-    const anchorPricePresent = anchorPrice && anchorPrice !== "" && anchorPrice !== 0;
+    const belowIdealHoldingLevel = holdingLevel === 'UND';
+    const alreadySelling = anchorPrice !== null && anchorPrice !== undefined && anchorPrice !== "" && anchorPrice !== 0;
     const priceAboveAnchor = price > anchorPrice;
 
-    console.log(symbol, tech, holdingLevel, price, anchorPrice, belowHoldingLevel, priceAboveAnchor);
+    console.log(symbol, tech, holdingLevel, price, anchorPrice, belowIdealHoldingLevel, priceAboveAnchor);
 
-    const trimmedLength = tech.trim().length;
-    if (anchorPricePresent && priceAboveAnchor) {
-        returnValue = "HOLD";
-    } else if (threeYearExpectedReturn >= buyThreshold && belowHoldingLevel) {
-        returnValue = (5 - trimmedLength);
-    } else if ((twoYearExpectedReturn < sellThreshold) || (anchorPricePresent && !priceAboveAnchor)) {
-        returnValue = -trimmedLength;
-    } else if (tech.length > 1) {
-        returnValue = -trimmedLength + 1;
+    const techNegativity = tech.trim().length;
+    const highTechNegativity = techNegativity > 1;
+    const inBuyZone = threeYearExpectedReturn >= buyThreshold;
+    const inSellZone = twoYearExpectedReturn < sellThreshold;
+    const partialSellZoneButAboveLastSell = alreadySelling && priceAboveAnchor;
+    const partialSellModeAndFallenBelowAnchor = alreadySelling && !priceAboveAnchor;
+
+    if (partialSellZoneButAboveLastSell) {
+        return "HOLD";
+    } else if (partialSellModeAndFallenBelowAnchor) {
+        return -techNegativity;
+    } else if (highTechNegativity) {
+        return -techNegativity + 1;
+    } else if (inBuyZone && belowIdealHoldingLevel && !alreadySelling) {
+        return (5 - techNegativity);
+    } else if (inSellZone && !alreadySelling) {
+        return -techNegativity;
+    } else if (tech.length > 1 && inSellZone) {
+        return -techNegativity + 1;
     } else {
-        returnValue = "HOLD";
+        return "HOLD";
     }
-    return returnValue;
 }
 
 function allocAmount(stage, totalCost) {
@@ -109,4 +117,4 @@ function remainingAlloc(stage, stockBuyValue, totalCost) {
 }
 
 // Don't copy this to app script
-export {checkTech, valuation, doValuation, trendValuationAction2, holdingLevel, allocAmount};
+export {checkTech, valuation, doValuation, trendValuationAction2, holdingLevel, allocAmount, buyThreshold, sellThreshold};

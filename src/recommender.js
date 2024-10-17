@@ -45,7 +45,7 @@ function checkTech(dayChange, tech, twoWeekChange) {
 
 function twoWeekCheckTech(twoWeekChange, tech) {
     if (twoWeekChange < 0.05 && twoWeekChange > -0.05) return false;
-    if ((twoWeekChange >= 0.05 && tech === "a") || (twoWeekChange <= -0.05 && ["aa", "aaa", "aaa"].includes(tech))) return false;
+    if ((twoWeekChange >= 0.05 && tech === "a") || (twoWeekChange <= -0.05 && ["aaa", "aaa"].includes(tech))) return false;
     return true;
 }
 
@@ -98,17 +98,17 @@ function allocAmount(stage, totalCost) {
         case 2:
             return totalCost * 0.01;
         case 3:
-            return totalCost * 0.015;
+            return totalCost * 0.017;
         case 4:
-            return totalCost * 0.02;
+            return totalCost * 0.0225;
         default:
             return 0;
     }
 }
 
-function holdingLevel(stage, stockBuyValue, totalCost) {
-    const diff = stockBuyValue - allocAmount(stage, totalCost);
-    if (diff >= 0.01) return "";
+function holdingLevel(stage, stockBuyValue, totalPortfolioCost) {
+    const diff = stockBuyValue - allocAmount(stage, totalPortfolioCost);
+    if (diff >= -0.01) return "";
     return "UND";
 }
 

@@ -53,11 +53,8 @@ function twoWeekCheckTech(twoWeekChange, tech) {
     return true;
 }
 
-function doValuation(quarterDoneIn, soicPrice, currentQuarter = "Jun-24", resultsOut = true) {
-    // const isRecommendedStock = soicPrice !== 0;
-    // if (isRecommendedStock) return false;
-
-    console.log("doValuation", soicPrice, quarterDoneIn, soicPrice, resultsOut);
+function doValuation(quarterDoneIn, currentQuarter = "Jun-24", resultsOut = true) {
+    console.log("doValuation", quarterDoneIn, resultsOut);
     return resultsOut && quarterDoneIn !== currentQuarter;
 }
 
@@ -82,7 +79,9 @@ function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYe
         return "HOLD";
     } else if (partialSellModeAndFallenBelowAnchor) {
         return -techNegativity;
-    } else if (highTechNegativity) {
+    } else if (highTechNegativity && inSellZone) {
+        return -techNegativity;
+    } else if (highTechNegativity && !inSellZone) {
         return -techNegativity + 1;
     } else if (inBuyZone && belowIdealHoldingLevel && !alreadySelling) {
         return (5 - techNegativity);

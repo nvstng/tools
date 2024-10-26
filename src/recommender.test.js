@@ -2,7 +2,7 @@ import {allocAmount, buyThreshold, checkTech, doValuation, holdingLevel, sellThr
 import {expect, it} from "@jest/globals";
 
 it('should do valuation', function () {
-    expect(doValuation("Jun-24", 0)).toBe(false);
+    expect(doValuation("Sep-24", "Jun-24", true)).toBe(true);
 });
 
 it('trendValuationAction2', function () {
@@ -11,6 +11,7 @@ it('trendValuationAction2', function () {
     expect(trendValuationAction2("A", "aaa", 0.61, 0.429, "UND", 927,null)).toBe(-2);
     expect(trendValuationAction2("A", "aaa", 0.628, 0.438, "UND", 910.35,null)).toBe(-2);
     expect(trendValuationAction2("A", "a", 1.39, 0.81, "", 987.85,"")).toBe("HOLD");
+    expect(trendValuationAction2("A", "aa", 0.237, 0.208, "UND", 1980,"")).toBe(-2);
 });
 
 it('holding level', function () {

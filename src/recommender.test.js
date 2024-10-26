@@ -12,6 +12,7 @@ it('trendValuationAction2', function () {
     expect(trendValuationAction2("A", "aaa", 0.628, 0.438, "UND", 910.35,null)).toBe(-2);
     expect(trendValuationAction2("A", "a", 1.39, 0.81, "", 987.85,"")).toBe("HOLD");
     expect(trendValuationAction2("A", "aa", 0.237, 0.208, "UND", 1980,"")).toBe(-2);
+    expect(trendValuationAction2("A", "aa", 0.237, 0.208, "UND", 1980,1970)).toBe("HOLD");
 });
 
 it('holding level', function () {

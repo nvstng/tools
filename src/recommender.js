@@ -1,3 +1,4 @@
+// add a rule that avoids big losses from all-time high
 // reduce holding when valuation reaches a certain point and low high is made
 // reduce stage?
 // set stage value based on valuation comfort and information availability

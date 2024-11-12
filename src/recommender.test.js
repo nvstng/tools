@@ -20,7 +20,8 @@ it('holding level', function () {
     expect(holdingLevel(2, 2.85, 360)).toBe("UND");
     expect(holdingLevel(2, 8.84, 360)).toBe("");
     expect(holdingLevel(1, 2.92, 400)).toBe("UND");
-    expect(holdingLevel(2, 5.00, 400)).toBe("");
+    expect(holdingLevel(2, 6.00, 400)).toBe("");
+    expect(holdingLevel(2.5, 5.61, 410)).toBe("UND");
 });
 
 it('should check tech', function () {

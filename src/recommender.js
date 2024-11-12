@@ -96,14 +96,14 @@ function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYe
 }
 
 function allocAmount(stage, totalCost) {
-    if (stage >= 1 && stage < 2) {
-        return (totalCost * stage * 0.0075) * 1.25;
-    } else if (stage >= 2 && stage < 3) {
-        return (totalCost * (stage / 2) * 0.01) * 1.25;
-    } else if (stage >= 3 && stage < 4) {
-        return (totalCost * (stage / 3) * 0.017) * 1.25;
-    } else if (stage >= 4 && stage < 5) {
-        return (totalCost * 0.0225) * 1.25;
+    if (stage <= 1) {
+        return (totalCost * stage * 0.01) * 1.25;
+    } else if (stage <= 2) {
+        return (totalCost * (stage / 2) * 0.01) * 1.5;
+    } else if (stage <= 3) {
+        return (totalCost * (stage / 3) * 0.017) * 1.75;
+    } else if (stage <= 4) {
+        return (totalCost * 0.0225) * 2;
     } else {
         return 0;
     }

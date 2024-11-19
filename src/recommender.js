@@ -65,7 +65,7 @@ const sellThreshold = 0.39;
 function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYearExpectedReturn, holdingLevel, price, anchorPrice) {
     const belowIdealHoldingLevel = holdingLevel === 'UND';
     const alreadySelling = anchorPrice !== null && anchorPrice !== undefined && anchorPrice !== "" && anchorPrice !== 0;
-    const priceAboveAnchor = price > anchorPrice;
+    const priceAboveAnchor = price > (anchorPrice * 1.02);
 
     console.log(symbol, tech, holdingLevel, price, anchorPrice, belowIdealHoldingLevel, priceAboveAnchor);
 

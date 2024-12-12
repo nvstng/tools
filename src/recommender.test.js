@@ -1,4 +1,4 @@
-import {allocAmount, buyThreshold, checkTech, doValuation, holdingLevel, sellThreshold, trendValuationAction2} from "./recommender.js";
+import {allocAmount, buyThreshold, checkTech, doValuation, holdingLevel, sellThreshold, sellThresholdDespiteTech, trendValuationAction2} from "./recommender.js";
 import {expect, it} from "@jest/globals";
 
 it('should do valuation', function () {
@@ -6,16 +6,18 @@ it('should do valuation', function () {
 });
 
 it('trendValuationAction2', function () {
-    expect(trendValuationAction2("A", "a", sellThreshold - 0.2, buyThreshold - 0.2, "UND", 288.40,1309.68)).toBe(-1);
-    expect(trendValuationAction2("A", "aaaa", sellThreshold + 0.2, buyThreshold - 0.01, "UND", 927,"")).toBe(-3);
-    expect(trendValuationAction2("A", "aaa", 0.61, 0.429, "UND", 927,null)).toBe(-2);
-    expect(trendValuationAction2("A", "aaa", 0.628, 0.438, "UND", 910.35,null)).toBe(-2);
-    expect(trendValuationAction2("A", "a", 1.39, 0.81, "", 987.85,"")).toBe("HOLD");
-    expect(trendValuationAction2("A", "aa", 0.237, 0.208, "UND", 1980,"")).toBe(-2);
-    expect(trendValuationAction2("A", "aa", 0.237, 0.208, "UND", 1980,1970)).toBe(-2);
-    expect(trendValuationAction2("A", "aa", 0.237, 0.208, "UND", 2010,1970)).toBe("HOLD");
-    expect(trendValuationAction2("A", "a", 0.37, 0.34, "UND", 7169,"")).toBe(-1);
-    expect(trendValuationAction2("A", "aa", 0.36, 0.28, "UND", 946.85,961.45)).toBe(-2);
+    expect(trendValuationAction2("A", "a", sellThreshold - 0.2, buyThreshold - 0.2, "UND", 288.40,1309.68, 0.02)).toBe(-1);
+    expect(trendValuationAction2("A", "aaaa", sellThreshold + 0.2, buyThreshold - 0.01, "UND", 927,"", -0.02)).toBe(-3);
+    expect(trendValuationAction2("A", "aaa", 0.61, 0.429, "UND", 927,null, 0.02)).toBe(-2);
+    expect(trendValuationAction2("A", "aaa", 0.628, 0.438, "UND", 910.35,null, -0.02)).toBe(-2);
+    expect(trendValuationAction2("A", "a", 1.39, 0.81, "", 987.85,"", 0.02)).toBe("HOLD");
+    expect(trendValuationAction2("A", "aa", 0.237, 0.208, "UND", 1980,"", 0.02)).toBe(-2);
+    expect(trendValuationAction2("A", "aa", 0.237, 0.208, "UND", 1980,1970, -0.02)).toBe("HOLD");
+    expect(trendValuationAction2("A", "aa", 0.237, 0.208, "UND", 2010,1970, 0.02)).toBe("HOLD");
+    expect(trendValuationAction2("A", "a", 0.37, 0.34, "UND", 7169,"", 0.02)).toBe(-1);
+    expect(trendValuationAction2("A", "a", 0.2, (sellThresholdDespiteTech - 0.01), "UND", 300,null, -0.02)).toBe(-2);
+    expect(trendValuationAction2("A", "aa", 0.2, (sellThresholdDespiteTech - 0.01), "UND", 300,null, -0.02)).toBe(-3);
+    expect(trendValuationAction2("A", "a", 0.2, (sellThresholdDespiteTech - 0.01), "UND", 291.50,296.00, -0.02)).toBe("HOLD");
 });
 
 it('holding level', function () {

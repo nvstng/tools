@@ -61,7 +61,7 @@ function doValuation(quarterDoneIn, currentQuarter = "Jun-24", resultsOut = true
 
 const buyThreshold = 0.44;
 const sellThreshold = 0.39;
-const sellThresholdDespiteTech = 0.12;
+const sellThresholdDespiteTech = 0.10;
 
 function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYearExpectedReturn, holdingLevel, price, anchorPrice, oneWeekChange = 0) {
     const belowIdealHoldingLevel = holdingLevel === 'UND';

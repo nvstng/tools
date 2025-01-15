@@ -60,10 +60,10 @@ function doValuation(quarterDoneIn, currentQuarter = "Jun-24", resultsOut = true
 }
 
 const buyThreshold = 0.44;
-const sellThreshold = 0.39;
-const sellThresholdDespiteTech = 0.10;
+const sellThreshold = 0.25;
+const sellThresholdDespiteTech = 0.15;
 
-function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYearExpectedReturn, holdingLevel, price, anchorPrice, oneWeekChange = 0) {
+function trendValuationAction2(symbol, tech = "", threeYearExpectedReturn, holdingLevel, price, anchorPrice, oneWeekChange = 0) {
     const belowIdealHoldingLevel = holdingLevel === 'UND';
     const alreadySelling = anchorPrice !== null && anchorPrice !== undefined && anchorPrice !== "" && anchorPrice !== 0;
     const priceAboveAnchor = (price * 1.02) >= anchorPrice;
@@ -73,7 +73,7 @@ function trendValuationAction2(symbol, tech = "", twoYearExpectedReturn, threeYe
     const techNegativity = tech.trim().length;
     const highTechNegativity = techNegativity > 1;
     const inBuyZone = (threeYearExpectedReturn >= buyThreshold);
-    const inSellZone = twoYearExpectedReturn < sellThreshold;
+    const inSellZone = threeYearExpectedReturn < sellThreshold;
     const partialSellZoneButAboveLastSell = alreadySelling && priceAboveAnchor;
     const partialSellModeAndFallenBelowAnchor = alreadySelling && !priceAboveAnchor;
     const veryOverValuedScore = (threeYearExpectedReturn <= sellThresholdDespiteTech && oneWeekChange < 0) ? -1 : 0;

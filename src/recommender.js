@@ -97,18 +97,8 @@ function trendValuationAction2(symbol, tech = "", threeYearExpectedReturn, holdi
     }
 }
 
-function allocAmount(stage, totalCost) {
-    if (stage <= 1) {
-        return (totalCost * stage * 0.015);
-    } else if (stage <= 2) {
-        return (totalCost * (stage / 2) * 0.02);
-    } else if (stage <= 3) {
-        return (totalCost * (stage / 3) * 0.03);
-    } else if (stage <= 4) {
-        return totalCost * 0.04;
-    } else {
-        return 0;
-    }
+function allocAmount(alloc, totalCost) {
+    return totalCost * alloc;
 }
 
 function holdingLevel(stage, stockBuyValue, totalPortfolioCost, requiresInvestingInBlocks = false) {

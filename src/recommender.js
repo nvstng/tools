@@ -98,11 +98,11 @@ function trendValuationAction2(symbol, tech = "", threeYearExpectedReturn, holdi
 }
 
 function allocAmount(alloc, totalCost) {
-    return totalCost * alloc;
+    return (totalCost * alloc) / 100;
 }
 
-function holdingLevel(stage, stockBuyValue, totalPortfolioCost, requiresInvestingInBlocks = false) {
-    const diff = stockBuyValue - allocAmount(stage, totalPortfolioCost);
+function holdingLevel(alloc, stockBuyValue, totalPortfolioCost, requiresInvestingInBlocks = false) {
+    const diff = stockBuyValue - allocAmount(alloc, totalPortfolioCost);
     if (requiresInvestingInBlocks && diff >= -0.6) return "";
     if (diff >= -0.01) return "";
     return "UND";

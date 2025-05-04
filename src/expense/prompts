@@ -1,0 +1,6 @@
+Create comma separated output with columns. Remove rupee symbol and commas from amount
+- Date of booking
+- Details
+- Amount
+- Date of travel
+- PNR number
